@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ピクプロ！ - ゲーム待機</title>
+  <!-- Tailwind CSSの読み込み -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ポップな日本語フォントの読み込み -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+  <style>
+    /* フォントを全体に適用 */
+    body {
+      font-family: 'Mochiy Pop One', sans-serif;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-gradient-to-br from-yellow-200 via-pink-200 to-blue-300 min-h-screen flex items-center justify-center p-4">
+
+  <!-- 全体を囲むカード -->
+  <div
+    class="w-full max-w-md mx-auto bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-2xl border-2 border-white">
+
+    <!-- 画面タイトル -->
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">みんながそろうまでまってね</h1>
+
+    <!-- ルームID表示エリア -->
+    <div class="mb-6 text-center">
+      <p class="text-gray-600 text-sm">ルームID</p>
+      <div class="bg-gray-200 rounded-lg p-3 mt-1 flex items-center justify-center">
+        <p id="room-id-display" class="text-2xl font-bold text-gray-800 tracking-widest">AB12CD</p>
+        <button class="ml-4 p-2 rounded-lg bg-white hover:bg-gray-100 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="w-6 h-6 text-gray-600">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v3.042m-7.332 0c-.055.194-.084.4-.084.612v3.042m0 0a2.25 2.25 0 0 0 2.25 2.25h3a2.25 2.25 0 0 0 2.25-2.25m-7.5 0h7.5m-7.5 0a2.25 2.25 0 0 0-2.25 2.25v3.75c0 1.243 1.007 2.25 2.25 2.25h3c1.243 0 2.25-1.007 2.25-2.25v-3.75a2.25 2.25 0 0 0-2.25-2.25h-3.03" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 参加者一覧 -->
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-gray-700 mb-2 text-center">いまいるメンバー</h2>
+      <div id="player-list" class="bg-white/50 rounded-lg p-4 h-40 overflow-y-auto border-2 border-white">
+        <!-- 参加者がここに動的に追加される -->
+        <p class="py-1 px-2 rounded-md bg-white mb-2 shadow">さとう（ホスト）</p>
+        <p class="py-1 px-2 rounded-md bg-white mb-2 shadow">たなか</p>
+        <p class="py-1 px-2 rounded-md bg-white mb-2 shadow">すずき</p>
+      </div>
+    </div>
+
+    <!-- ゲーム設定表示 -->
+    <div class="text-sm text-gray-600 space-y-1 mb-6 text-center">
+      <p>とうひょうモード: <span class="font-bold text-pink-500">だれのかな？</span></p>
+      <p>なんかい勝負？: <span class="font-bold text-pink-500">3回</span></p>
+    </div>
+
+
+    <!-- ボタンエリア -->
+    <div class="space-y-3">
+      <!-- ゲームをはじめるボタン (ホストのみ) -->
+      <button
+        class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300">
+        ゲームをはじめる！
+      </button>
+      <!-- ルール確認ボタン -->
+      <button
+        class="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded-xl text-base shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-300">
+        ルールかくにん
+      </button>
+      <!-- ルームからでるボタン -->
+      <button
+        class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-xl text-sm mt-2 transition-transform transform hover:scale-105">
+        ルームからでる
+      </button>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

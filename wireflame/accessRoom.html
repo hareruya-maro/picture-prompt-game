@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ピクプロ！ - ルームに参加</title>
+  <!-- Tailwind CSSの読み込み -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ポップな日本語フォントの読み込み -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+  <style>
+    /* フォントを全体に適用 */
+    body {
+      font-family: 'Mochiy Pop One', sans-serif;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-gradient-to-br from-yellow-200 via-pink-200 to-blue-300 min-h-screen flex items-center justify-center p-4">
+
+  <!-- 全体を囲むカード -->
+  <div
+    class="w-full max-w-md mx-auto text-center bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-2xl border-2 border-white">
+
+    <!-- 画面タイトル -->
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">ルームにはいる</h1>
+
+    <!-- 入力項目 -->
+    <div class="space-y-6 text-left">
+      <!-- あなたの名前 -->
+      <div>
+        <label for="guest-name" class="block text-gray-700 font-bold mb-2">あなたのなまえ</label>
+        <input type="text" id="guest-name" placeholder="なまえをいれてね"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition">
+      </div>
+
+      <!-- ルームID -->
+      <div>
+        <label for="room-id" class="block text-gray-700 font-bold mb-2">ルームID</label>
+        <input type="text" id="room-id" placeholder="ホストにおしえてもらってね"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition">
+      </div>
+    </div>
+
+    <!-- ボタンエリア -->
+    <div class="mt-8 space-y-4">
+      <!-- 参加するボタン -->
+      <button
+        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+        このルームにはいる！
+      </button>
+      <!-- もどるボタン -->
+      <button
+        class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl text-base mt-2 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300">
+        もどる
+      </button>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

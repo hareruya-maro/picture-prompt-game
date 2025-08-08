@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ピクプロ！ - 投票</title>
+  <!-- Tailwind CSSの読み込み -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ポップな日本語フォントの読み込み -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+  <style>
+    /* フォントを全体に適用 */
+    body {
+      font-family: 'Mochiy Pop One', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-yellow-200 via-pink-200 to-blue-300 min-h-screen p-4">
+
+  <div class="container mx-auto">
+    <!-- 画面タイトル -->
+    <h1 class="text-3xl md:text-4xl font-bold text-white text-center mb-4"
+      style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">いちばんにてるのはどれ？</h1>
+
+    <!-- お手本の絵エリア -->
+    <div class="mb-6 sticky top-4 z-10">
+      <div class="max-w-xs mx-auto bg-white/80 backdrop-blur-sm p-2 rounded-2xl shadow-lg border-2 border-white">
+        <p class="text-center text-sm text-gray-600 mb-1">おてほんの絵</p>
+        <img src="https://placehold.co/600x400/f6ad55/ffffff?text=おてほんの絵" alt="お手本の絵" class="w-full h-auto rounded-lg">
+      </div>
+    </div>
+
+    <!-- 投票ギャラリー -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+      <!-- プレイヤーの絵 1 -->
+      <div
+        class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-lg border-2 border-white text-center transition-transform transform hover:scale-105">
+        <img src="https://placehold.co/400x400/81e6d9/ffffff?text=みんなの絵+1" alt="プレイヤー1の絵"
+          class="w-full h-auto rounded-lg mb-3 cursor-pointer">
+        <button
+          class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg text-lg shadow-md transition">
+          とうひょう！
+        </button>
+      </div>
+
+      <!-- プレイヤーの絵 2 -->
+      <div
+        class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-lg border-2 border-white text-center transition-transform transform hover:scale-105">
+        <img src="https://placehold.co/400x400/d6bcfa/ffffff?text=みんなの絵+2" alt="プレイヤー2の絵"
+          class="w-full h-auto rounded-lg mb-3 cursor-pointer">
+        <button
+          class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg text-lg shadow-md transition">
+          とうひょう！
+        </button>
+      </div>
+
+      <!-- プレイヤーの絵 3 -->
+      <div
+        class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-lg border-2 border-white text-center transition-transform transform hover:scale-105">
+        <img src="https://placehold.co/400x400/fbb6ce/ffffff?text=みんなの絵+3" alt="プレイヤー3の絵"
+          class="w-full h-auto rounded-lg mb-3 cursor-pointer">
+        <button
+          class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg text-lg shadow-md transition">
+          とうひょう！
+        </button>
+      </div>
+
+      <!-- プレイヤーの絵 4 -->
+      <div
+        class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-lg border-2 border-white text-center transition-transform transform hover:scale-105">
+        <img src="https://placehold.co/400x400/a0aec0/ffffff?text=みんなの絵+4" alt="プレイヤー4の絵"
+          class="w-full h-auto rounded-lg mb-3 cursor-pointer">
+        <button
+          class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg text-lg shadow-md transition">
+          とうひょう！
+        </button>
+      </div>
+
+      <!-- ...人数分繰り返す... -->
+
+    </div>
+  </div>
+
+</body>
+
+</html>

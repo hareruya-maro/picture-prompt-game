@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ピクプロ！ - ルーム作成</title>
+  <!-- Tailwind CSSの読み込み -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ポップな日本語フォントの読み込み -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+  <style>
+    /* フォントを全体に適用 */
+    body {
+      font-family: 'Mochiy Pop One', sans-serif;
+    }
+
+    /* カスタムラジオボタン（トグルスイッチ風）のスタイル */
+    .peer:checked~.peer-checked\:bg-green-400 {
+      background-color: #4ade80;
+      /* Tailwindのgreen-400 */
+    }
+
+    .peer:checked~.peer-checked\:text-white {
+      color: white;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-gradient-to-br from-yellow-200 via-pink-200 to-blue-300 min-h-screen flex items-center justify-center p-4">
+
+  <!-- 全体を囲むカード -->
+  <div
+    class="w-full max-w-md mx-auto text-center bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-2xl border-2 border-white">
+
+    <!-- 画面タイトル -->
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">ルームをつくる</h1>
+
+    <!-- 設定項目 -->
+    <div class="space-y-6 text-left">
+      <!-- あなたの名前 -->
+      <div>
+        <label for="host-name" class="block text-gray-700 font-bold mb-2">あなたのなまえ</label>
+        <input type="text" id="host-name" placeholder="なまえをいれてね"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-pink-500 focus:ring-pink-500 transition">
+      </div>
+
+      <!-- 投票モード -->
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">とうひょうモード</label>
+        <div class="flex bg-gray-200 rounded-xl p-1">
+          <div class="w-1/2 relative">
+            <input type="radio" id="mode-anonymous" name="vote-mode" class="peer sr-only" checked>
+            <label for="mode-anonymous"
+              class="block text-center w-full py-2 rounded-lg cursor-pointer transition peer-checked:bg-green-400 peer-checked:text-white text-gray-600">だれのかな？</label>
+          </div>
+          <div class="w-1/2 relative">
+            <input type="radio" id="mode-named" name="vote-mode" class="peer sr-only">
+            <label for="mode-named"
+              class="block text-center w-full py-2 rounded-lg cursor-pointer transition peer-checked:bg-green-400 peer-checked:text-white text-gray-600">みんなの絵</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ラウンド数 -->
+      <div>
+        <label class="block text-gray-700 font-bold mb-2">なんかい勝負？</label>
+        <div class="flex items-center justify-center bg-gray-200 rounded-xl p-1">
+          <button id="rounds-minus"
+            class="text-2xl font-bold text-gray-600 w-12 h-12 rounded-lg hover:bg-gray-300 transition">-</button>
+          <span id="rounds-display" class="text-3xl font-bold text-gray-800 w-24 text-center">3</span>
+          <button id="rounds-plus"
+            class="text-2xl font-bold text-gray-600 w-12 h-12 rounded-lg hover:bg-gray-300 transition">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ボタンエリア -->
+    <div class="mt-8 space-y-4">
+      <!-- ルームをつくるボタン -->
+      <button
+        class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300">
+        この設定でルームをつくる！
+      </button>
+      <!-- もどるボタン -->
+      <button
+        class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl text-base mt-2 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300">
+        もどる
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // ラウンド数カウンターのロジック
+    const minusButton = document.getElementById('rounds-minus');
+    const plusButton = document.getElementById('rounds-plus');
+    const display = document.getElementById('rounds-display');
+    let rounds = 3;
+    const minRounds = 1;
+    const maxRounds = 10;
+
+    minusButton.addEventListener('click', () => {
+      if (rounds > minRounds) {
+        rounds--;
+        display.textContent = rounds;
+      }
+    });
+
+    plusButton.addEventListener('click', () => {
+      if (rounds < maxRounds) {
+        rounds++;
+        display.textContent = rounds;
+      }
+    });
+  </script>
+
+</body>
+
+</html>
