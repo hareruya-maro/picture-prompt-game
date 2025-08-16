@@ -18,7 +18,7 @@ export const metadata: Metadata = {
       "ピクプロは、ひらめきでお題の絵を完全再現するゲームです。友達と一緒に楽しもう！",
     images: [
       {
-        url: "/ogp/thumbnail.png", // 🌟 静的画像の指定
+        url: "https://pic-pro-front--picture-prompt-game.asia-east1.hosted.app/ogp/thumbnail.png", // 🌟 静的画像の指定
         width: 1200,
         height: 630,
       },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
       "ピクプロは、ひらめきでお題の絵を完全再現するゲームです。友達と一緒に楽しもう！",
     site: "https://www.copitto.com/",
     images: {
-      url: "/ogp/thumbnail.png",
+      url: "https://pic-pro-front--picture-prompt-game.asia-east1.hosted.app/ogp/thumbnail.png",
       type: "image/png",
       width: 1200,
       height: 630,
