@@ -15,8 +15,4 @@ export interface Room {
   hostName?: string;
   voteMode?: string;
   rounds?: number; // totalRoundsと同等
-  // voteページで使用されるプロパティ
-  theme?: {
-    imageUrl: string;
-  };
 }

@@ -11,6 +11,9 @@
     ],
     "alwaysDeployFromSource": true
   },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "storage": {
     "rules": "storage.rules",
     "bucket": "picture-prompt-game.firebasestorage.app"

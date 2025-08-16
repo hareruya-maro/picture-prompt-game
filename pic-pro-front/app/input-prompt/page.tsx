@@ -19,6 +19,7 @@ export default function InputPrompt() {
   const [submissionStatus, setSubmissionStatus] = useState<
     Record<string, boolean>
   >({});
+  const [currentRound, setCurrentRound] = useState<number | null>(null);
 
   useEffect(() => {
     if (!roomId) {
@@ -30,7 +31,17 @@ export default function InputPrompt() {
     const unsubscribeRoom = onSnapshot(roomRef, (doc) => {
       if (doc.exists()) {
         const roomData = doc.data() as Room;
+
+        // 新しいラウンドが始まった場合、状態をリセット
+        if (currentRound !== null && roomData.currentRound !== currentRound) {
+          setPrompt("");
+          setIsSubmitted(false);
+          setSubmissionStatus({});
+        }
+
         setRoom(roomData);
+        setCurrentRound(roomData.currentRound || null);
+
         if (roomData.status === "drawing") {
           // statusが'drawing'になったら自動的に次の段階へ
           // drawing状態の表示は後で処理
@@ -43,27 +54,52 @@ export default function InputPrompt() {
       }
     });
 
+    return () => {
+      unsubscribeRoom();
+    };
+  }, [roomId, router, currentRound]);
+
+  // プロンプトの監視を別のuseEffectで行う
+  useEffect(() => {
+    if (!roomId || !room) return;
+
     const promptsRef = collection(db, "rooms", roomId, "prompts");
     const unsubscribePrompts = onSnapshot(promptsRef, (snapshot) => {
       const status: Record<string, boolean> = {};
       snapshot.forEach((doc) => {
-        status[doc.id] = true;
-        // 自分がsubmitしたかどうかチェック
-        if (user && doc.id === user.uid) {
-          setIsSubmitted(true);
+        const data = doc.data();
+        // 現在のラウンドのプロンプトのみを対象にする
+        if (
+          data.round === room.currentRound ||
+          (!data.round && (room.currentRound || 1) === 1)
+        ) {
+          status[doc.id] = true;
+          // 自分がsubmitしたかどうかチェック
+          if (user && doc.id === user.uid) {
+            setIsSubmitted(true);
+          }
         }
       });
       setSubmissionStatus(status);
     });
 
     return () => {
-      unsubscribeRoom();
       unsubscribePrompts();
     };
-  }, [roomId, router, user]);
+  }, [roomId, room, user]);
+
+  // ラウンドが変わった時に状態をリセット
+  useEffect(() => {
+    if (room && currentRound !== null && room.currentRound !== currentRound) {
+      setPrompt("");
+      setIsSubmitted(false);
+      setSubmissionStatus({});
+      setCurrentRound(room.currentRound || null);
+    }
+  }, [room?.currentRound, currentRound]);
 
   const handleSubmitPrompt = async () => {
-    if (!prompt.trim() || !user || !roomId || isSubmitted) return;
+    if (!prompt.trim() || !user || !roomId || isSubmitted || !room) return;
 
     try {
       const promptRef = doc(db, "rooms", roomId, "prompts", user.uid);
@@ -71,6 +107,7 @@ export default function InputPrompt() {
         prompt: prompt.trim(),
         authorName: room?.players[user.uid]?.name || "Unknown",
         submittedAt: new Date(),
+        round: room.currentRound || 1,
       });
       setIsSubmitted(true);
     } catch (error) {
@@ -166,11 +203,6 @@ export default function InputPrompt() {
                   style={{ maxHeight: "400px", objectFit: "contain" }}
                 />
               </div>
-              {room.themePrompt && (
-                <p className="text-lg text-gray-700 mt-4 font-medium">
-                  テーマ: {room.themePrompt}
-                </p>
-              )}
             </div>
           )}
         </div>
@@ -193,7 +225,7 @@ export default function InputPrompt() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="例: 青い空の下で、笑顔の女の子が赤い花を持っている絵"
-                className="w-full h-32 p-4 border-2 border-gray-300 rounded-xl text-lg resize-none focus:border-pink-500 focus:outline-none"
+                className="w-full h-32 p-4 border-2 border-gray-300 rounded-xl text-lg resize-none focus:border-pink-500 focus:outline-none text-gray-800 placeholder-gray-400"
                 maxLength={500}
               />
 

@@ -94,7 +94,7 @@ export default function Vote() {
               おてほんの絵
             </p>
             <img
-              src={room.theme?.imageUrl}
+              src={room.sampleImageUrl}
               alt="お手本の絵"
               className="w-full h-auto rounded-lg"
             />

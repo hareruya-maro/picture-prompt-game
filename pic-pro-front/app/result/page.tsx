@@ -3,6 +3,7 @@
 import { db } from "@/src/lib/firebase/client";
 import { Room } from "@/src/types/room";
 import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -21,6 +22,7 @@ export default function ResultPage() {
 
   const [room, setRoom] = useState<Room | null>(null);
   const [results, setResults] = useState<Result[]>([]);
+  const [isStarting, setIsStarting] = useState(false);
 
   useEffect(() => {
     if (!roomId) {
@@ -31,7 +33,16 @@ export default function ResultPage() {
     const roomRef = doc(db, "rooms", roomId);
     const unsubscribeRoom = onSnapshot(roomRef, (doc) => {
       if (doc.exists()) {
-        setRoom(doc.data() as Room);
+        const roomData = doc.data() as Room;
+        setRoom(roomData);
+
+        // Handle navigation based on room status
+        if (roomData.status === "starting") {
+          // Game is starting, show loading state but stay on this page
+          return;
+        } else if (roomData.status === "input-prompt") {
+          router.push(`/input-prompt?roomId=${roomId}`);
+        }
       }
     });
 
@@ -54,18 +65,33 @@ export default function ResultPage() {
   const handleNextRound = async () => {
     if (!roomId || !room) return;
     const nextRound = (room.currentRound || 0) + 1;
+
     if (nextRound > (room.rounds || 1)) {
       await updateDoc(doc(db, "rooms", roomId), { status: "final" });
       router.push(`/final-result?roomId=${roomId}`);
     } else {
-      await updateDoc(doc(db, "rooms", roomId), {
-        status: "waiting",
-        currentRound: nextRound,
-        theme: null, // Reset theme
-      });
-      // Clear subcollections for next round
-      // This should ideally be a backend function for security and reliability
-      router.push(`/waiting-room/${roomId}`);
+      setIsStarting(true);
+      try {
+        // Update room status to indicate next round is starting
+        const roomRef = doc(db, "rooms", roomId);
+        await updateDoc(roomRef, {
+          status: "starting",
+          currentRound: nextRound,
+          theme: null, // Reset theme
+        });
+
+        const functions = getFunctions();
+        const generateGameTheme = httpsCallable(
+          functions,
+          "generateGameThemeFlow"
+        );
+        await generateGameTheme({ roomId });
+        // The onSnapshot listener will handle the redirect
+      } catch (error) {
+        console.error("Error starting next round:", error);
+        alert("次のラウンドの開始に失敗しました。");
+        setIsStarting(false);
+      }
     }
   };
 
@@ -112,9 +138,14 @@ export default function ResultPage() {
         <div className="mt-8 text-center">
           <button
             onClick={handleNextRound}
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105"
+            disabled={isStarting}
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 disabled:bg-gray-400"
           >
-            {isFinalRound ? "最終結果へ" : "次のラウンドへ"}
+            {isStarting
+              ? "次のラウンドをはじめています..."
+              : isFinalRound
+              ? "最終結果へ"
+              : "次のラウンドへ"}
           </button>
         </div>
       </div>

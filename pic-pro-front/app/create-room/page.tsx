@@ -74,7 +74,7 @@ export default function CreateRoom() {
               placeholder="なまえをいれてね"
               value={hostName}
               onChange={(e) => setHostName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-pink-500 focus:ring-pink-500 transition text-gray-800"
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-pink-500 focus:ring-pink-500 transition text-gray-800 placeholder-gray-400"
             />
           </div>
 

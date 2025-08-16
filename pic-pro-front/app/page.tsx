@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -31,12 +30,12 @@ export default function Home() {
 
         <div className="space-y-4">
           <Link href="/create-room">
-            <button className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-300">
+            <button className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold my-4 py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-300">
               ルームをつくる
             </button>
           </Link>
           <Link href="/access-room">
-            <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+            <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold my-4 py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
               ルームにはいる
             </button>
           </Link>

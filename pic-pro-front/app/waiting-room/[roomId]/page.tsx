@@ -1,5 +1,6 @@
 "use client";
 
+import QRCodeDisplay from "@/src/components/QRCodeDisplay";
 import { useAuth } from "@/src/hooks/useAuth";
 import { db } from "@/src/lib/firebase/client";
 import { Room } from "@/src/types/room";
@@ -98,12 +99,17 @@ export default function WaitingRoom() {
     return <div>Loading...</div>;
   }
 
+  // 参加用URLを生成（ルームIDをクエリパラメータとして追加）
+  const joinUrl = `${window.location.origin}/access-room?roomId=${roomId}`;
+
   return (
     <main className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md mx-auto bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-2xl border-2 border-white">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">
           みんながそろうまでまってね
         </h1>
+
+        <QRCodeDisplay url={joinUrl} roomId={roomId} />
 
         <div className="mb-6 text-center">
           <p className="text-gray-600 text-sm">ルームID</p>
@@ -141,7 +147,7 @@ export default function WaitingRoom() {
             {Object.entries(room.players).map(([uid, player]) => (
               <p
                 key={uid}
-                className="py-1 px-2 rounded-md bg-white mb-2 shadow"
+                className="py-1 px-2 rounded-md bg-white mb-2 shadow text-gray-800 font-medium"
               >
                 {player.name} {uid === room.hostId && "（ホスト）"}
               </p>

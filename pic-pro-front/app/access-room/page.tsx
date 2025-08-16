@@ -4,15 +4,24 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { db } from "@/src/lib/firebase/client";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function AccessRoom() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [guestName, setGuestName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [isJoining, setIsJoining] = useState(false);
+
+  // クエリパラメータからルームIDを取得して初期値として設定
+  useEffect(() => {
+    const roomIdFromQuery = searchParams.get("roomId");
+    if (roomIdFromQuery) {
+      setRoomId(roomIdFromQuery);
+    }
+  }, [searchParams]);
 
   const handleJoinRoom = async () => {
     if (!guestName.trim() || !roomId.trim() || !user) {
@@ -66,7 +75,7 @@ export default function AccessRoom() {
               placeholder="なまえをいれてね"
               value={guestName}
               onChange={(e) => setGuestName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition text-gray-800 placeholder-gray-400"
             />
           </div>
 
@@ -83,7 +92,7 @@ export default function AccessRoom() {
               placeholder="ホストにおしえてもらってね"
               value={roomId}
               onChange={(e) => setRoomId(e.target.value.trim())}
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition text-gray-800 placeholder-gray-400"
             />
           </div>
         </div>
