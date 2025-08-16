@@ -13,6 +13,7 @@ interface Result {
   prompt: string;
   authorName: string;
   votes: string[];
+  round?: number;
 }
 
 export default function ResultPage() {
@@ -46,21 +47,34 @@ export default function ResultPage() {
       }
     });
 
+    return () => {
+      unsubscribeRoom();
+    };
+  }, [roomId, router]);
+
+  useEffect(() => {
+    if (!roomId || !room) return;
+
     const resultsRef = collection(db, "rooms", roomId, "results");
     const unsubscribeResults = onSnapshot(resultsRef, (snapshot) => {
-      const resultsData = snapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as Result)
-      );
+      const currentRound = room.currentRound || 1;
+      const resultsData = snapshot.docs
+        .filter((doc) => {
+          const data = doc.data();
+          return (
+            data.round === currentRound || (!data.round && currentRound === 1)
+          );
+        })
+        .map((doc) => ({ id: doc.id, ...doc.data() } as Result));
       // Sort by votes
       resultsData.sort((a, b) => b.votes.length - a.votes.length);
       setResults(resultsData);
     });
 
     return () => {
-      unsubscribeRoom();
       unsubscribeResults();
     };
-  }, [roomId, router]);
+  }, [roomId, room]);
 
   const handleNextRound = async () => {
     if (!roomId || !room) return;

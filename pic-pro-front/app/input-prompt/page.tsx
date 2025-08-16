@@ -61,21 +61,29 @@ export default function InputPrompt() {
 
   // プロンプトの監視を別のuseEffectで行う
   useEffect(() => {
-    if (!roomId || !room) return;
+    if (!roomId || !room || !user) return;
 
     const promptsRef = collection(db, "rooms", roomId, "prompts");
     const unsubscribePrompts = onSnapshot(promptsRef, (snapshot) => {
       const status: Record<string, boolean> = {};
+      const currentRound = room.currentRound || 1;
+
       snapshot.forEach((doc) => {
         const data = doc.data();
-        // 現在のラウンドのプロンプトのみを対象にする
+        // 現在のラウンドのプロンプトのみを対象にする（1回目は後方互換性のためroundフィールドなしも許可）
         if (
-          data.round === room.currentRound ||
-          (!data.round && (room.currentRound || 1) === 1)
+          data.round === currentRound ||
+          (!data.round && currentRound === 1)
         ) {
-          status[doc.id] = true;
-          // 自分がsubmitしたかどうかチェック
-          if (user && doc.id === user.uid) {
+          const userId = data.userId || doc.id; // userId field or fallback to doc.id
+          status[userId] = true;
+
+          // 自分がsubmitしたかどうかチェック（新しいID形式に対応）
+          if (
+            data.userId === user.uid ||
+            doc.id === `${user.uid}_round_${currentRound}` ||
+            (doc.id === user.uid && currentRound === 1)
+          ) {
             setIsSubmitted(true);
           }
         }
@@ -102,12 +110,16 @@ export default function InputPrompt() {
     if (!prompt.trim() || !user || !roomId || isSubmitted || !room) return;
 
     try {
-      const promptRef = doc(db, "rooms", roomId, "prompts", user.uid);
+      // Use round-specific document ID to avoid overwriting
+      const currentRound = room.currentRound || 1;
+      const promptId = `${user.uid}_round_${currentRound}`;
+      const promptRef = doc(db, "rooms", roomId, "prompts", promptId);
       await setDoc(promptRef, {
         prompt: prompt.trim(),
         authorName: room?.players[user.uid]?.name || "Unknown",
         submittedAt: new Date(),
-        round: room.currentRound || 1,
+        round: currentRound,
+        userId: user.uid, // Add userId field for identification
       });
       setIsSubmitted(true);
     } catch (error) {

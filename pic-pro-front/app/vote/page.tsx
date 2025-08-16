@@ -19,6 +19,7 @@ interface Result {
   prompt: string;
   authorName: string;
   votes: string[];
+  round?: number;
 }
 
 export default function Vote() {
@@ -30,6 +31,7 @@ export default function Vote() {
   const [room, setRoom] = useState<Room | null>(null);
   const [results, setResults] = useState<Result[]>([]);
   const [voted, setVoted] = useState(false);
+  const [currentRound, setCurrentRound] = useState<number | null>(null);
 
   useEffect(() => {
     if (!roomId) {
@@ -41,19 +43,54 @@ export default function Vote() {
     const unsubscribeRoom = onSnapshot(roomRef, (doc) => {
       if (doc.exists()) {
         const roomData = doc.data() as Room;
+
+        // Reset voted state when round changes
+        if (currentRound !== null && roomData.currentRound !== currentRound) {
+          setVoted(false);
+        }
+
         setRoom(roomData);
+        setCurrentRound(roomData.currentRound || 1);
+
         if (roomData.status === "result") {
           router.push(`/result?roomId=${roomId}`);
         }
       }
     });
 
+    return () => {
+      unsubscribeRoom();
+    };
+  }, [roomId, router]);
+
+  useEffect(() => {
+    if (!roomId || !room) return;
+
     const resultsRef = collection(db, "rooms", roomId, "results");
     const unsubscribeResults = onSnapshot(resultsRef, (snapshot) => {
-      const resultsData = snapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as Result)
+      const currentRound = room.currentRound || 1;
+      console.log(
+        `[Vote] Current round: ${currentRound}, Total results: ${snapshot.docs.length}`
+      );
+
+      const resultsData = snapshot.docs
+        .filter((doc) => {
+          const data = doc.data();
+          const isCurrentRound =
+            data.round === currentRound || (!data.round && currentRound === 1);
+          console.log(
+            `[Vote] Result ${doc.id}: round=${data.round}, isCurrentRound=${isCurrentRound}, imageUrl=${data.imageUrl}`
+          );
+          return isCurrentRound;
+        })
+        .map((doc) => ({ id: doc.id, ...doc.data() } as Result));
+
+      console.log(
+        `[Vote] Filtered results for round ${currentRound}:`,
+        resultsData
       );
       setResults(resultsData);
+
       // Check if current user has already voted
       if (user && resultsData.some((r) => r.votes.includes(user.uid))) {
         setVoted(true);
@@ -61,10 +98,9 @@ export default function Vote() {
     });
 
     return () => {
-      unsubscribeRoom();
       unsubscribeResults();
     };
-  }, [roomId, router, user]);
+  }, [roomId, room, user]);
 
   const handleVote = async (resultId: string) => {
     if (!user || !roomId || voted) return;
@@ -74,6 +110,23 @@ export default function Vote() {
 
   if (!room) {
     return <div>Loading...</div>;
+  }
+
+  if (results.length === 0) {
+    return (
+      <main className="min-h-screen p-4">
+        <div className="container mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
+            結果を読み込み中...
+          </h1>
+          <div className="text-center text-white">
+            <p>現在のラウンド: {room.currentRound || 1}</p>
+            <p>結果の数: {results.length}</p>
+            <p>ゲームステータス: {room.status}</p>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (

@@ -167,16 +167,44 @@ export const onPromptSubmitted = onDocumentCreated(
 
     const roomData = roomSnap.data()!;
     const playerCount = Object.keys(roomData.players).length;
+    const currentRound = roomData.currentRound || 1;
 
-    // Check if all players have submitted their prompts
+    console.log(
+      `[onPromptSubmitted] Room ${roomId}, Round ${currentRound}, Players: ${playerCount}`
+    );
+
+    // Check if all players have submitted their prompts for the current round
+    // For the first round, prompts might not have a round field, so we check both conditions
     const promptsSnap = await db
       .collection("rooms")
       .doc(roomId)
       .collection("prompts")
       .get();
 
-    if (promptsSnap.size >= playerCount) {
+    console.log(
+      `[onPromptSubmitted] Total prompts in collection: ${promptsSnap.size}`
+    );
+
+    const currentRoundPrompts = promptsSnap.docs.filter((doc) => {
+      const data = doc.data();
+      // For round 1, also include prompts without round field (backward compatibility)
+      const isCurrentRound =
+        data.round === currentRound || (!data.round && currentRound === 1);
+      console.log(
+        `[onPromptSubmitted] Prompt ${doc.id}: round=${data.round}, isCurrentRound=${isCurrentRound}`
+      );
+      return isCurrentRound;
+    });
+
+    console.log(
+      `[onPromptSubmitted] Current round prompts: ${currentRoundPrompts.length}/${playerCount}`
+    );
+
+    if (currentRoundPrompts.length >= playerCount) {
       // All prompts are submitted, start drawing phase
+      console.log(
+        `[onPromptSubmitted] All prompts submitted for round ${currentRound}, updating status to 'drawing'`
+      );
       await roomRef.update({ status: "drawing" });
     }
   }
@@ -216,17 +244,28 @@ export const onStartDrawing = onDocumentUpdated(
     }
 
     const { roomId } = event.params;
+    const currentRound = after.currentRound || 1;
+
     const promptsSnap = await db
       .collection("rooms")
       .doc(roomId)
       .collection("prompts")
       .get();
 
-    const drawingPromises = promptsSnap.docs.map(async (promptDoc) => {
-      const promptData = promptDoc.data();
-      const userId = promptDoc.id;
+    // Filter prompts for the current round (backward compatibility for round 1)
+    const currentRoundPrompts = promptsSnap.docs.filter((doc) => {
+      const data = doc.data();
+      return data.round === currentRound || (!data.round && currentRound === 1);
+    });
 
-      console.log(`Generating image for user ${userId} with prompt:`, promptData.prompt);
+    const drawingPromises = currentRoundPrompts.map(async (promptDoc) => {
+      const promptData = promptDoc.data();
+      const userId = promptData.userId || promptDoc.id; // Use userId field or fallback to doc.id
+
+      console.log(
+        `Generating image for user ${userId} with prompt:`,
+        promptData.prompt
+      );
 
       const imageResponse = await ai.generate({
         prompt: promptData.prompt,
@@ -270,17 +309,27 @@ export const onStartDrawing = onDocumentUpdated(
       }
 
       // Save the result in a new subcollection
+      // Use round-specific document ID to avoid overwriting
+      const resultId = `${userId}_round_${currentRound}`;
+      console.log(
+        `[onStartDrawing] Saving result for user ${userId}, round ${currentRound}, resultId: ${resultId}`
+      );
+
       await db
         .collection("rooms")
         .doc(roomId)
         .collection("results")
-        .doc(userId)
+        .doc(resultId)
         .set({
           imageUrl: imageUrl,
           prompt: promptData.prompt,
           authorName: promptData.authorName,
+          round: currentRound,
+          userId: userId, // Keep userId for identification
           votes: [],
         });
+
+      console.log(`[onStartDrawing] Result saved successfully for ${resultId}`);
     });
 
     await Promise.all(drawingPromises);
@@ -301,13 +350,21 @@ export const onVote = onDocumentUpdated(
 
     const roomData = roomSnap.data()!;
     const playerCount = Object.keys(roomData.players).length;
+    const currentRound = roomData.currentRound || 1;
 
     const resultsSnap = await db
       .collection("rooms")
       .doc(roomId)
       .collection("results")
       .get();
-    const totalVotes = resultsSnap.docs.reduce(
+
+    // Filter results for the current round (backward compatibility for round 1)
+    const currentRoundResults = resultsSnap.docs.filter((doc) => {
+      const data = doc.data();
+      return data.round === currentRound || (!data.round && currentRound === 1);
+    });
+
+    const totalVotes = currentRoundResults.reduce(
       (acc, doc) => acc + doc.data().votes.length,
       0
     );
@@ -315,7 +372,7 @@ export const onVote = onDocumentUpdated(
     if (totalVotes >= playerCount) {
       // Calculate scores for this round
       const newScores = { ...roomData.players };
-      resultsSnap.docs.forEach((doc) => {
+      currentRoundResults.forEach((doc) => {
         const resultData = doc.data();
         const authorId = doc.id;
         if (newScores[authorId]) {
