@@ -255,7 +255,7 @@ export const onStartDrawing = onDocumentUpdated(
     // Filter prompts for the current round (backward compatibility for round 1)
     const currentRoundPrompts = promptsSnap.docs.filter((doc) => {
       const data = doc.data();
-      return data.round === currentRound || (!data.round && currentRound === 1);
+      return (data.round || 1) === currentRound;
     });
 
     const drawingPromises = currentRoundPrompts.map(async (promptDoc) => {
@@ -324,7 +324,7 @@ export const onStartDrawing = onDocumentUpdated(
           imageUrl: imageUrl,
           prompt: promptData.prompt,
           authorName: promptData.authorName,
-          round: currentRound,
+          round: promptData.round || currentRound || 1, // Use round field or default to currentRound
           userId: userId, // Keep userId for identification
           votes: [],
         });
@@ -361,7 +361,7 @@ export const onVote = onDocumentUpdated(
     // Filter results for the current round (backward compatibility for round 1)
     const currentRoundResults = resultsSnap.docs.filter((doc) => {
       const data = doc.data();
-      return data.round === currentRound || (!data.round && currentRound === 1);
+      return (data.round || 1) === currentRound;
     });
 
     const totalVotes = currentRoundResults.reduce(
@@ -421,21 +421,16 @@ const _nextRoundFlow = ai.defineFlow(
     const currentRound = roomData.currentRound || 1;
     const nextRound = currentRound + 1;
 
-    // Clear previous round data
+    // Clear previous round prompts only (keep results for history)
     const promptsSnap = await db
       .collection("rooms")
       .doc(roomId)
       .collection("prompts")
       .get();
-    const resultsSnap = await db
-      .collection("rooms")
-      .doc(roomId)
-      .collection("results")
-      .get();
 
     const batch = db.batch();
     promptsSnap.docs.forEach((doc) => batch.delete(doc.ref));
-    resultsSnap.docs.forEach((doc) => batch.delete(doc.ref));
+    // Don't delete results - keep them for history
     await batch.commit();
 
     // Update room for next round

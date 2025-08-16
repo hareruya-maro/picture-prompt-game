@@ -61,9 +61,7 @@ export default function ResultPage() {
       const resultsData = snapshot.docs
         .filter((doc) => {
           const data = doc.data();
-          return (
-            data.round === currentRound || (!data.round && currentRound === 1)
-          );
+          return (data.round || 1) === currentRound;
         })
         .map((doc) => ({ id: doc.id, ...doc.data() } as Result));
       // Sort by votes

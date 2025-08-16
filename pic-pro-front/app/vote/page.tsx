@@ -19,7 +19,7 @@ interface Result {
   prompt: string;
   authorName: string;
   votes: string[];
-  round?: number;
+  round: number;
 }
 
 export default function Vote() {
