@@ -1,4 +1,16 @@
 env:
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyDVZkLSO9smdt77Irqu5lnaknzKhbxFyk8
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: picture-prompt-game.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: picture-prompt-game
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: picture-prompt-game.firebasestorage.app
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "449497934712"
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:449497934712:web:2019aba136c4020791368d
 #- variable: ENV_VAR_NAME
 #  value: plaintext value
 #- variable: SECRET_ENV_VAR_NAME
