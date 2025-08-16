@@ -33,9 +33,11 @@ export default function Home() {
               ルームにはいる
             </button>
           </Link>
-          <button className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl text-base mt-4 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300">
-            あそびかた
-          </button>
+          <Link href="/how-to-play">
+            <button className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl text-base mt-4 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300">
+              あそびかた
+            </button>
+          </Link>
         </div>
       </div>
     </main>
