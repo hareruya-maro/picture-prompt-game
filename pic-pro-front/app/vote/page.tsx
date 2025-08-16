@@ -33,6 +33,14 @@ export default function Vote() {
   const [voted, setVoted] = useState(false);
   const [currentRound, setCurrentRound] = useState<number | null>(null);
 
+  // Reset voted state when component mounts or currentRound changes
+  useEffect(() => {
+    console.log(
+      `[Vote] Round changed to: ${currentRound}, resetting voted state`
+    );
+    setVoted(false);
+  }, [currentRound]);
+
   useEffect(() => {
     if (!roomId) {
       router.push("/");
@@ -46,6 +54,9 @@ export default function Vote() {
 
         // Reset voted state when round changes
         if (currentRound !== null && roomData.currentRound !== currentRound) {
+          console.log(
+            `[Vote] Round changed from ${currentRound} to ${roomData.currentRound}, resetting voted state`
+          );
           setVoted(false);
         }
 
@@ -54,6 +65,8 @@ export default function Vote() {
 
         if (roomData.status === "result") {
           router.push(`/result?roomId=${roomId}`);
+        } else if (roomData.status === "final-result") {
+          router.push(`/final-result?roomId=${roomId}`);
         }
       }
     });
@@ -61,7 +74,7 @@ export default function Vote() {
     return () => {
       unsubscribeRoom();
     };
-  }, [roomId, router]);
+  }, [roomId, router, currentRound]);
 
   useEffect(() => {
     if (!roomId || !room) return;
@@ -92,8 +105,10 @@ export default function Vote() {
       setResults(resultsData);
 
       // Check if current user has already voted
-      if (user && resultsData.some((r) => r.votes.includes(user.uid))) {
-        setVoted(true);
+      if (user) {
+        const hasVoted = resultsData.some((r) => r.votes.includes(user.uid));
+        console.log(`[Vote] User ${user.uid} has voted: ${hasVoted}`);
+        setVoted(hasVoted);
       }
     });
 
@@ -104,8 +119,15 @@ export default function Vote() {
 
   const handleVote = async (resultId: string) => {
     if (!user || !roomId || voted) return;
-    const resultRef = doc(db, "rooms", roomId, "results", resultId);
-    await updateDoc(resultRef, { votes: arrayUnion(user.uid) });
+
+    try {
+      const resultRef = doc(db, "rooms", roomId, "results", resultId);
+      await updateDoc(resultRef, { votes: arrayUnion(user.uid) });
+      console.log(`[Vote] Successfully voted for result ${resultId}`);
+      setVoted(true);
+    } catch (error) {
+      console.error("[Vote] Error voting:", error);
+    }
   };
 
   if (!room) {

@@ -77,9 +77,10 @@ export default function ResultPage() {
   const handleNextRound = async () => {
     if (!roomId || !room) return;
     const nextRound = (room.currentRound || 0) + 1;
+    const totalRounds = room.rounds || room.totalRounds || 1;
 
-    if (nextRound > (room.rounds || 1)) {
-      await updateDoc(doc(db, "rooms", roomId), { status: "final" });
+    if (nextRound > totalRounds) {
+      await updateDoc(doc(db, "rooms", roomId), { status: "final-result" });
       router.push(`/final-result?roomId=${roomId}`);
     } else {
       setIsStarting(true);
@@ -111,7 +112,8 @@ export default function ResultPage() {
     return <div>Loading...</div>;
   }
 
-  const isFinalRound = room.currentRound === room.rounds;
+  const isFinalRound =
+    room.currentRound === (room.rounds || room.totalRounds || 1);
 
   return (
     <main className="min-h-screen p-4">

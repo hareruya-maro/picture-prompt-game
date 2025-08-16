@@ -369,19 +369,21 @@ export const onVote = onDocumentUpdated(
       0
     );
 
+    console.log(totalVotes, playerCount);
+
     if (totalVotes >= playerCount) {
       // Calculate scores for this round
       const newScores = { ...roomData.players };
       currentRoundResults.forEach((doc) => {
         const resultData = doc.data();
-        const authorId = doc.id;
+        const authorId = resultData.userId || doc.id; // Use userId field or fallback to doc.id
         if (newScores[authorId]) {
           newScores[authorId].score += resultData.votes.length;
         }
       });
 
       const currentRound = roomData.currentRound || 1;
-      const totalRounds = roomData.totalRounds || 1;
+      const totalRounds = roomData.rounds || roomData.totalRounds || 1;
 
       if (currentRound < totalRounds) {
         // More rounds to go, update to result status first

@@ -86,18 +86,20 @@ export default function FinalResult() {
         </div>
 
         <div
-          className="reveal-up-animation w-full max-w-md mx-auto bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border-2 border-white"
+          className="reveal-up-animation w-full max-w-md mx-auto bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-lg border-2 border-white"
           style={{ animationDelay: "1s" }}
         >
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4 drop-shadow-lg">
             さいしゅうランキング
           </h2>
           <div className="space-y-2 text-lg text-left">
             {ranking.map((player, index) => (
               <p
                 key={index}
-                className={`p-2 rounded-lg ${
-                  index === 0 ? "bg-yellow-200" : "bg-gray-100"
+                className={`p-2 rounded-lg font-semibold ${
+                  index === 0
+                    ? "bg-yellow-200 text-yellow-900"
+                    : "bg-gray-100 text-gray-900"
                 }`}
               >
                 {getRankEmoji(index)} {player.name} ({player.score}点)
