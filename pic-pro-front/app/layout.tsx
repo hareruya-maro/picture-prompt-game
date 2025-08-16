@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/src/components/AuthProvider";
 import type { Metadata } from "next";
 import { Mochiy_Pop_One } from "next/font/google";
 import "./globals.css";
@@ -22,7 +23,7 @@ export default function RootLayout({
       <body
         className={`${mochiyPopOne.className} bg-gradient-to-br from-yellow-200 via-pink-200 to-blue-300 min-h-screen`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

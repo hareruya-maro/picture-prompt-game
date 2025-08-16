@@ -1,6 +1,80 @@
-import Link from "next/link";
+"use client";
 
-export default function Result() {
+import { db } from "@/src/lib/firebase/client";
+import { Room } from "@/src/types/room";
+import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+interface Result {
+  id: string;
+  imageUrl: string;
+  prompt: string;
+  authorName: string;
+  votes: string[];
+}
+
+export default function ResultPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const roomId = searchParams.get("roomId");
+
+  const [room, setRoom] = useState<Room | null>(null);
+  const [results, setResults] = useState<Result[]>([]);
+
+  useEffect(() => {
+    if (!roomId) {
+      router.push("/");
+      return;
+    }
+
+    const roomRef = doc(db, "rooms", roomId);
+    const unsubscribeRoom = onSnapshot(roomRef, (doc) => {
+      if (doc.exists()) {
+        setRoom(doc.data() as Room);
+      }
+    });
+
+    const resultsRef = collection(db, "rooms", roomId, "results");
+    const unsubscribeResults = onSnapshot(resultsRef, (snapshot) => {
+      const resultsData = snapshot.docs.map(
+        (doc) => ({ id: doc.id, ...doc.data() } as Result)
+      );
+      // Sort by votes
+      resultsData.sort((a, b) => b.votes.length - a.votes.length);
+      setResults(resultsData);
+    });
+
+    return () => {
+      unsubscribeRoom();
+      unsubscribeResults();
+    };
+  }, [roomId, router]);
+
+  const handleNextRound = async () => {
+    if (!roomId || !room) return;
+    const nextRound = (room.currentRound || 0) + 1;
+    if (nextRound > (room.rounds || 1)) {
+      await updateDoc(doc(db, "rooms", roomId), { status: "final" });
+      router.push(`/final-result?roomId=${roomId}`);
+    } else {
+      await updateDoc(doc(db, "rooms", roomId), {
+        status: "waiting",
+        currentRound: nextRound,
+        theme: null, // Reset theme
+      });
+      // Clear subcollections for next round
+      // This should ideally be a backend function for security and reliability
+      router.push(`/waiting-room/${roomId}`);
+    }
+  };
+
+  if (!room || results.length === 0) {
+    return <div>Loading...</div>;
+  }
+
+  const isFinalRound = room.currentRound === room.rounds;
+
   return (
     <main className="min-h-screen p-4">
       <div className="container mx-auto">
@@ -12,52 +86,36 @@ export default function Result() {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border-2 border-white text-center">
-            <img
-              src="https://placehold.co/400x400/81e6d9/ffffff?text=みんなの絵+1"
-              alt="プレイヤー1の絵"
-              className="w-full h-auto rounded-lg mb-3"
-            />
-            <p className="font-bold text-lg text-gray-800">さとう</p>
-            <p className="text-pink-500 font-bold text-xl">3票</p>
-            <p className="text-sm text-gray-600 mt-2 bg-gray-100 p-2 rounded-lg">
-              「かわいい猫、宇宙服を着て、星空を飛んでいる」
-            </p>
-          </div>
-
-          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border-2 border-white text-center">
-            <img
-              src="https://placehold.co/400x400/d6bcfa/ffffff?text=みんなの絵+2"
-              alt="プレイヤー2の絵"
-              className="w-full h-auto rounded-lg mb-3"
-            />
-            <p className="font-bold text-lg text-gray-800">すずき</p>
-            <p className="text-pink-500 font-bold text-xl">1票</p>
-            <p className="text-sm text-gray-600 mt-2 bg-gray-100 p-2 rounded-lg">
-              「宇宙を旅する猫」
-            </p>
-          </div>
-
-          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border-2 border-white text-center">
-            <img
-              src="https://placehold.co/400x400/fbb6ce/ffffff?text=みんなの絵+3"
-              alt="プレイヤー3の絵"
-              className="w-full h-auto rounded-lg mb-3"
-            />
-            <p className="font-bold text-lg text-gray-800">たなか</p>
-            <p className="text-pink-500 font-bold text-xl">0票</p>
-            <p className="text-sm text-gray-600 mt-2 bg-gray-100 p-2 rounded-lg">
-              「ねこ」
-            </p>
-          </div>
+          {results.map((result) => (
+            <div
+              key={result.id}
+              className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border-2 border-white text-center"
+            >
+              <img
+                src={result.imageUrl}
+                alt={`${result.authorName}の絵`}
+                className="w-full h-auto rounded-lg mb-3"
+              />
+              <p className="font-bold text-lg text-gray-800">
+                {result.authorName}
+              </p>
+              <p className="text-pink-500 font-bold text-xl">
+                {result.votes.length}票
+              </p>
+              <p className="text-sm text-gray-600 mt-2 bg-gray-100 p-2 rounded-lg">
+                {result.prompt}
+              </p>
+            </div>
+          ))}
         </div>
 
         <div className="mt-8 text-center">
-          <Link href="/final-result">
-            <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105">
-              最終結果へ
-            </button>
-          </Link>
+          <button
+            onClick={handleNextRound}
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105"
+          >
+            {isFinalRound ? "最終結果へ" : "次のラウンドへ"}
+          </button>
         </div>
       </div>
     </main>

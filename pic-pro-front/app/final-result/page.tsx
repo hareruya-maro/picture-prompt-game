@@ -1,6 +1,56 @@
+"use client";
+
+import { db } from "@/src/lib/firebase/client";
+import { Player, Room } from "@/src/types/room";
+import { doc, onSnapshot } from "firebase/firestore";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function FinalResult() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const roomId = searchParams.get("roomId");
+
+  const [room, setRoom] = useState<Room | null>(null);
+  const [ranking, setRanking] = useState<Player[]>([]);
+
+  useEffect(() => {
+    if (!roomId) {
+      router.push("/");
+      return;
+    }
+
+    const roomRef = doc(db, "rooms", roomId);
+    const unsubscribe = onSnapshot(roomRef, (doc) => {
+      if (doc.exists()) {
+        const roomData = doc.data() as Room;
+        setRoom(roomData);
+        const sortedPlayers = Object.values(roomData.players).sort(
+          (a, b) => b.score - a.score
+        );
+        setRanking(sortedPlayers);
+      } else {
+        router.push("/");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [roomId, router]);
+
+  if (!room || ranking.length === 0) {
+    return <div>Loading...</div>;
+  }
+
+  const winner = ranking[0];
+
+  const getRankEmoji = (index: number) => {
+    if (index === 0) return "🥇";
+    if (index === 1) return "🥈";
+    if (index === 2) return "🥉";
+    return `${index + 1}位:`;
+  };
+
   return (
     <main className="min-h-screen flex items-center justify-center p-4 overflow-hidden">
       <div className="container mx-auto text-center">
@@ -29,9 +79,9 @@ export default function FinalResult() {
               />
             </svg>
             <p className="text-4xl md:text-5xl font-bold text-pink-500">
-              さとうさん！
+              {winner.name}さん！
             </p>
-            <p className="text-2xl text-gray-700 mt-2">15点</p>
+            <p className="text-2xl text-gray-700 mt-2">{winner.score}点</p>
           </div>
         </div>
 
@@ -43,10 +93,16 @@ export default function FinalResult() {
             さいしゅうランキング
           </h2>
           <div className="space-y-2 text-lg text-left">
-            <p className="p-2 rounded-lg bg-yellow-200">🥇 1位: さとう (15点)</p>
-            <p className="p-2 rounded-lg bg-gray-200">🥈 2位: すずき (11点)</p>
-            <p className="p-2 rounded-lg bg-orange-200">🥉 3位: たなか (8点)</p>
-            <p className="p-2 rounded-lg">4位: わたなべ (5点)</p>
+            {ranking.map((player, index) => (
+              <p
+                key={index}
+                className={`p-2 rounded-lg ${
+                  index === 0 ? "bg-yellow-200" : "bg-gray-100"
+                }`}
+              >
+                {getRankEmoji(index)} {player.name} ({player.score}点)
+              </p>
+            ))}
           </div>
         </div>
 
@@ -57,11 +113,6 @@ export default function FinalResult() {
           <Link href="/">
             <button className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105">
               もういちどあそぶ！
-            </button>
-          </Link>
-          <Link href="/">
-            <button className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-4 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105">
-              トップにもどる
             </button>
           </Link>
         </div>
