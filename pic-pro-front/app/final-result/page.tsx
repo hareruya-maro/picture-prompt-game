@@ -184,6 +184,23 @@ export default function FinalResult() {
             </ruby>
             ぶ
           </button>
+          <Link href={`/result?roomId=${roomId}&round=1`}>
+            <button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105">
+              ラウンド
+              <ruby>
+                結果<rt>けっか</rt>
+              </ruby>
+              を
+              <ruby>
+                振<rt>ふ</rt>
+              </ruby>
+              り
+              <ruby>
+                返<rt>かえ</rt>
+              </ruby>
+              る
+            </button>
+          </Link>
           <Link href="/">
             <button className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105">
               <ruby>

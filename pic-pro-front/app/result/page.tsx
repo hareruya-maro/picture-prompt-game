@@ -21,15 +21,22 @@ export default function ResultPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const roomId = searchParams.get("roomId");
+  const roundParam = searchParams.get("round");
 
   const [room, setRoom] = useState<Room | null>(null);
   const [results, setResults] = useState<Result[]>([]);
   const [isStarting, setIsStarting] = useState(false);
+  const [viewingRound, setViewingRound] = useState<number | null>(null);
 
   useEffect(() => {
     if (!roomId) {
       router.push("/");
       return;
+    }
+
+    // Set viewing round from URL parameter or current round
+    if (roundParam) {
+      setViewingRound(parseInt(roundParam));
     }
 
     const roomRef = doc(db, "rooms", roomId);
@@ -38,12 +45,19 @@ export default function ResultPage() {
         const roomData = doc.data() as Room;
         setRoom(roomData);
 
-        // Handle navigation based on room status
-        if (roomData.status === "starting") {
-          // Game is starting, show loading state but stay on this page
-          return;
-        } else if (roomData.status === "input-prompt") {
-          router.push(`/input-prompt?roomId=${roomId}`);
+        // Set viewing round if not set from URL parameter
+        if (!roundParam && !viewingRound) {
+          setViewingRound(roomData.currentRound || 1);
+        }
+
+        // Handle navigation based on room status (only if not in final-result status)
+        if (roomData.status !== "final-result") {
+          if (roomData.status === "starting") {
+            // Game is starting, show loading state but stay on this page
+            return;
+          } else if (roomData.status === "input-prompt") {
+            router.push(`/input-prompt?roomId=${roomId}`);
+          }
         }
       }
     });
@@ -51,18 +65,17 @@ export default function ResultPage() {
     return () => {
       unsubscribeRoom();
     };
-  }, [roomId, router]);
+  }, [roomId, router, roundParam, viewingRound]);
 
   useEffect(() => {
-    if (!roomId || !room) return;
+    if (!roomId || !room || !viewingRound) return;
 
     const resultsRef = collection(db, "rooms", roomId, "results");
     const unsubscribeResults = onSnapshot(resultsRef, (snapshot) => {
-      const currentRound = room.currentRound || 1;
       const resultsData = snapshot.docs
         .filter((doc) => {
           const data = doc.data();
-          return (data.round || 1) === currentRound;
+          return (data.round || 1) === viewingRound;
         })
         .map((doc) => ({ id: doc.id, ...doc.data() } as Result));
       // Sort by votes
@@ -73,7 +86,7 @@ export default function ResultPage() {
     return () => {
       unsubscribeResults();
     };
-  }, [roomId, room]);
+  }, [roomId, room, viewingRound]);
 
   const handleNextRound = async () => {
     if (!roomId || !room) return;
@@ -109,12 +122,38 @@ export default function ResultPage() {
     }
   };
 
-  if (!room || results.length === 0) {
+  const handlePreviousRound = () => {
+    if (!viewingRound || viewingRound <= 1) return;
+    const newRound = viewingRound - 1;
+    setViewingRound(newRound);
+    router.push(`/result?roomId=${roomId}&round=${newRound}`, {
+      scroll: false,
+    });
+  };
+
+  const handleNextRoundReview = () => {
+    if (!viewingRound || !room) return;
+    const totalRounds = room.rounds || room.totalRounds || 1;
+    if (viewingRound >= totalRounds) return;
+    const newRound = viewingRound + 1;
+    setViewingRound(newRound);
+    router.push(`/result?roomId=${roomId}&round=${newRound}`, {
+      scroll: false,
+    });
+  };
+
+  const handleBackToFinalResult = () => {
+    router.push(`/final-result?roomId=${roomId}`);
+  };
+
+  if (!room || results.length === 0 || !viewingRound) {
     return <LoadingSpinner />;
   }
 
   const isFinalRound =
     room.currentRound === (room.rounds || room.totalRounds || 1);
+  const isReviewMode = room.status === "final-result";
+  const totalRounds = room.rounds || room.totalRounds || 1;
 
   return (
     <main className="min-h-screen p-4">
@@ -123,14 +162,60 @@ export default function ResultPage() {
           className="text-3xl md:text-4xl font-bold text-white text-center mb-4"
           style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
         >
-          <ruby>
-            結果<rt>けっか</rt>
-          </ruby>
-          <ruby>
-            発表<rt>はっぴょう</rt>
-          </ruby>
-          ！
+          {isReviewMode ? (
+            <>
+              <ruby>
+                第<rt>だい</rt>
+              </ruby>
+              {viewingRound}ラウンドの
+              <ruby>
+                結果<rt>けっか</rt>
+              </ruby>
+            </>
+          ) : (
+            <>
+              <ruby>
+                結果<rt>けっか</rt>
+              </ruby>
+              <ruby>
+                発表<rt>はっぴょう</rt>
+              </ruby>
+              ！
+            </>
+          )}
         </h1>
+
+        {/* Round navigation for review mode */}
+        {isReviewMode && (
+          <div className="flex justify-center items-center gap-4 mb-6">
+            <button
+              onClick={handlePreviousRound}
+              disabled={viewingRound <= 1}
+              className="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-transform transform hover:scale-105 disabled:cursor-not-allowed"
+            >
+              ←
+              <ruby>
+                前<rt>まえ</rt>
+              </ruby>
+              のラウンド
+            </button>
+
+            <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg font-bold text-gray-800">
+              {viewingRound} / {totalRounds}
+            </div>
+
+            <button
+              onClick={handleNextRoundReview}
+              disabled={viewingRound >= totalRounds}
+              className="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-transform transform hover:scale-105 disabled:cursor-not-allowed"
+            >
+              <ruby>
+                次<rt>つぎ</rt>
+              </ruby>
+              のラウンド →
+            </button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {results.map((result) => (
@@ -160,37 +245,56 @@ export default function ResultPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <button
-            onClick={handleNextRound}
-            disabled={isStarting}
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 disabled:bg-gray-400"
-          >
-            {isStarting ? (
-              <span>
-                <ruby>
-                  次<rt>つぎ</rt>
-                </ruby>
-                のラウンドをはじめています...
-              </span>
-            ) : isFinalRound ? (
-              <span>
-                <ruby>
-                  最終<rt>さいしゅう</rt>
-                </ruby>
-                <ruby>
-                  結果<rt>けっか</rt>
-                </ruby>
-                へ
-              </span>
-            ) : (
-              <span>
-                <ruby>
-                  次<rt>つぎ</rt>
-                </ruby>
-                のラウンドへ
-              </span>
-            )}
-          </button>
+          {isReviewMode ? (
+            <button
+              onClick={handleBackToFinalResult}
+              className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105"
+            >
+              <ruby>
+                最終<rt>さいしゅう</rt>
+              </ruby>
+              <ruby>
+                結果<rt>けっか</rt>
+              </ruby>
+              に
+              <ruby>
+                戻<rt>もど</rt>
+              </ruby>
+              る
+            </button>
+          ) : (
+            <button
+              onClick={handleNextRound}
+              disabled={isStarting}
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 disabled:bg-gray-400"
+            >
+              {isStarting ? (
+                <span>
+                  <ruby>
+                    次<rt>つぎ</rt>
+                  </ruby>
+                  のラウンドをはじめています...
+                </span>
+              ) : isFinalRound ? (
+                <span>
+                  <ruby>
+                    最終<rt>さいしゅう</rt>
+                  </ruby>
+                  <ruby>
+                    結果<rt>けっか</rt>
+                  </ruby>
+                  へ
+                </span>
+              ) : (
+                <span>
+                  <ruby>
+                    次<rt>つぎ</rt>
+                  </ruby>
+                  のラウンドへ
+                </span>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </main>
