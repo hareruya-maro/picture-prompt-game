@@ -3,7 +3,8 @@
 import LoadingSpinner from "@/src/components/LoadingSpinner";
 import { db } from "@/src/lib/firebase/client";
 import { Player, Room } from "@/src/types/room";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,6 +16,9 @@ export default function FinalResult() {
 
   const [room, setRoom] = useState<Room | null>(null);
   const [ranking, setRanking] = useState<Player[]>([]);
+  const [showRoundDialog, setShowRoundDialog] = useState(false);
+  const [additionalRounds, setAdditionalRounds] = useState(1);
+  const [isStarting, setIsStarting] = useState(false);
 
   useEffect(() => {
     if (!roomId) {
@@ -60,6 +64,45 @@ export default function FinalResult() {
     );
   };
 
+  const handleContinueGame = async () => {
+    if (!roomId || !room) return;
+
+    setIsStarting(true);
+
+    try {
+      const roomRef = doc(db, "rooms", roomId);
+      const newTotalRounds = (room.totalRounds || 0) + additionalRounds;
+      const newCurrentRound = (room.currentRound || 1) + 1;
+
+      await updateDoc(roomRef, {
+        totalRounds: newTotalRounds,
+        currentRound: newCurrentRound,
+        rounds: newTotalRounds, // rounds プロパティも更新
+        status: "starting", // ステータスを描画中に更新
+      });
+
+      const functions = getFunctions();
+      const generateGameTheme = httpsCallable(
+        functions,
+        "generateGameThemeFlow"
+      );
+      await generateGameTheme({ roomId });
+
+      // ダイアログを閉じてテーマ選択画面に遷移
+      setShowRoundDialog(false);
+      router.push(`/input-prompt?roomId=${roomId}`);
+    } catch (error) {
+      console.error("Error updating room rounds:", error);
+      alert("ラウンド数の更新に失敗しました。もう一度お試しください。");
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
+  if (isStarting) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <main className="min-h-screen flex items-center justify-center p-4 overflow-hidden">
       <div className="container mx-auto text-center">
@@ -75,21 +118,12 @@ export default function FinalResult() {
           </h1>
 
           <div
-            className="pop-in-animation mt-4 inline-block bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-2xl border-2 border-white relative"
+            className="pop-in-animation mt-8 inline-block bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-2xl border-2 border-white relative"
             style={{ animationDelay: "0.5s" }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-16 h-16 text-yellow-400 absolute -top-8 left-1/2 -translate-x-1/2"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.25 2.25a3 3 0 0 0-3 3v4.303a3 3 0 0 0 .879 2.121l1.027 1.028a.75.75 0 0 0 1.06 0l1.028-1.028a3 3 0 0 0 .879-2.121V5.25a3 3 0 0 0-3-3Zm-1.5 5.25a1.5 1.5 0 0 1 1.5-1.5h.008a1.5 1.5 0 0 1 1.5 1.5v.293a1.5 1.5 0 0 1-.44 1.06l-.624.624a.75.75 0 0 0-1.06 0l-.625-.624a1.5 1.5 0 0 1-.44-1.06v-.293Zm1.5-3.75a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-1.5 0V4.5a.75.75 0 0 1 .75-.75ZM12 2.25a3 3 0 0 0-3 3v4.303a3 3 0 0 0 .879 2.121l1.027 1.028a.75.75 0 0 0 1.06 0l1.028-1.028a3 3 0 0 0 .879-2.121V5.25a3 3 0 0 0-3-3Zm-1.5 5.25a1.5 1.5 0 0 1 1.5-1.5h.008a1.5 1.5 0 0 1 1.5 1.5v.293a1.5 1.5 0 0 1-.44 1.06l-.624.624a.75.75 0 0 0-1.06 0l-.625-.624a1.5 1.5 0 0 1-.44-1.06v-.293Zm1.5-3.75a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-1.5 0V4.5a.75.75 0 0 1 .75-.75ZM18.75 2.25a3 3 0 0 0-3 3v4.303a3 3 0 0 0 .879 2.121l1.027 1.028a.75.75 0 0 0 1.06 0l1.028-1.028a3 3 0 0 0 .879-2.121V5.25a3 3 0 0 0-3-3Zm-1.5 5.25a1.5 1.5 0 0 1 1.5-1.5h.008a1.5 1.5 0 0 1 1.5 1.5v.293a1.5 1.5 0 0 1-.44 1.06l-.624.624a.75.75 0 0 0-1.06 0l-.625-.624a1.5 1.5 0 0 1-.44-1.06v-.293Zm1.5-3.75a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-1.5 0V4.5a.75.75 0 0 1 .75-.75Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <div className="text-6xl absolute -top-8 left-1/2 -translate-x-1/2">
+              👑
+            </div>
             <p className="text-4xl md:text-5xl font-bold text-pink-500">
               {winner.name}さん！
             </p>
@@ -136,20 +170,93 @@ export default function FinalResult() {
           className="reveal-up-animation mt-8 space-y-4 sm:space-y-0 sm:flex sm:gap-4 sm:justify-center"
           style={{ animationDelay: "1.2s" }}
         >
+          <button
+            onClick={() => setShowRoundDialog(true)}
+            className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105"
+          >
+            もう
+            <ruby>
+              少<rt>すこ</rt>
+            </ruby>
+            し
+            <ruby>
+              遊<rt>あそ</rt>
+            </ruby>
+            ぶ
+          </button>
           <Link href="/">
             <button className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105">
-              もう
               <ruby>
-                一度<rt>いちど</rt>
+                最初<rt>さいしょ</rt>
               </ruby>
+              から
               <ruby>
                 遊<rt>あそ</rt>
               </ruby>
-              ぶ！
+              ぶ
             </button>
           </Link>
         </div>
       </div>
+
+      {/* ラウンド追加ダイアログ */}
+      {showRoundDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+            <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
+              <ruby>
+                追加<rt>ついか</rt>
+              </ruby>
+              ラウンド
+              <ruby>
+                数<rt>すう</rt>
+              </ruby>
+            </h3>
+
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <button
+                onClick={() =>
+                  setAdditionalRounds(Math.max(1, additionalRounds - 1))
+                }
+                className="w-12 h-12 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-xl font-bold text-gray-700 transition-colors"
+              >
+                −
+              </button>
+
+              <div className="bg-gray-100 px-6 py-3 rounded-lg">
+                <span className="text-2xl font-bold text-gray-800">
+                  {additionalRounds}
+                </span>
+              </div>
+
+              <button
+                onClick={() => setAdditionalRounds(additionalRounds + 1)}
+                className="w-12 h-12 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-xl font-bold text-gray-700 transition-colors"
+              >
+                ＋
+              </button>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowRoundDialog(false)}
+                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl transition-colors"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={handleContinueGame}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-colors"
+              >
+                <ruby>
+                  追加<rt>ついか</rt>
+                </ruby>
+                する
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
