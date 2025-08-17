@@ -19,23 +19,23 @@ export default function Home() {
           ピクプロ！
         </h1>
         <p className="text-gray-600 mb-8 text-sm sm:text-base">
-          ひらめきで、お題の絵を完全再現！
+          ひらめきで、お<ruby>題<rt>だい</rt></ruby>の<ruby>絵<rt>え</rt></ruby>を<ruby>完全<rt>かんぜん</rt></ruby><ruby>再現<rt>さいげん</rt></ruby>！
         </p>
 
         <div className="space-y-4">
           <Link href="/create-room">
             <button className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold my-4 py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-300">
-              ルームをつくる
+              ルームを<ruby>作<rt>つく</rt></ruby>る
             </button>
           </Link>
           <Link href="/access-room">
             <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold my-4 py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
-              ルームにはいる
+              ルームに<ruby>入<rt>はい</rt></ruby>る
             </button>
           </Link>
           <Link href="/how-to-play">
             <button className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl text-base mt-4 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300">
-              あそびかた
+              <ruby>遊<rt>あそ</rt></ruby>び<ruby>方<rt>かた</rt></ruby>
             </button>
           </Link>
         </div>

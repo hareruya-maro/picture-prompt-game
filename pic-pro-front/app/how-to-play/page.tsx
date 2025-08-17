@@ -14,49 +14,276 @@ export default function HowToPlay() {
             className="mx-auto mb-4"
           />
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-            あそびかた
+            <ruby>
+              遊<rt>あそ</rt>
+            </ruby>
+            び
+            <ruby>
+              方<rt>かた</rt>
+            </ruby>
           </h1>
         </div>
 
         <div className="space-y-6 text-gray-700">
           <div className="bg-yellow-100 p-4 rounded-xl border-l-4 border-yellow-500">
             <h2 className="text-xl font-bold mb-2 text-yellow-700">
-              🎯 ゲームの目的
+              🎯 ゲームの
+              <ruby>
+                目的<rt>もくてき</rt>
+              </ruby>
             </h2>
             <p className="text-sm sm:text-base">
-              お題の画像を見て、その内容を説明するプロンプトを考えます。
+              お
+              <ruby>
+                題<rt>だい</rt>
+              </ruby>
+              の
+              <ruby>
+                画像<rt>がぞう</rt>
+              </ruby>
+              を
+              <ruby>
+                見<rt>み</rt>
+              </ruby>
+              て、その
+              <ruby>
+                内容<rt>ないよう</rt>
+              </ruby>
+              を
+              <ruby>
+                説明<rt>せつめい</rt>
+              </ruby>
+              するプロンプトを
+              <ruby>
+                考<rt>かんが</rt>
+              </ruby>
+              えます。
               <br />
-              各プレイヤーが考えたプロンプトからAIで画像を生成して、どれだけ元の画像に近づけるかを競います！
+              <ruby>
+                各<rt>かく</rt>
+              </ruby>
+              プレイヤーが
+              <ruby>
+                考<rt>かんが</rt>
+              </ruby>
+              えたプロンプトからAIで
+              <ruby>
+                画像<rt>がぞう</rt>
+              </ruby>
+              を
+              <ruby>
+                生成<rt>せいせい</rt>
+              </ruby>
+              して、どれだけ
+              <ruby>
+                元<rt>もと</rt>
+              </ruby>
+              の
+              <ruby>
+                画像<rt>がぞう</rt>
+              </ruby>
+              に
+              <ruby>
+                近<rt>ちか</rt>
+              </ruby>
+              づけるかを
+              <ruby>
+                競<rt>きそ</rt>
+              </ruby>
+              います！
             </p>
           </div>
 
           <div className="bg-blue-100 p-4 rounded-xl border-l-4 border-blue-500">
             <h2 className="text-xl font-bold mb-3 text-blue-700">
-              📋 ゲームの流れ
+              📋 ゲームの
+              <ruby>
+                流<rt>なが</rt>
+              </ruby>
+              れ
             </h2>
             <ol className="list-decimal list-inside space-y-2 text-sm sm:text-base">
               <li>
-                <strong>ルーム作成・参加：</strong>
-                誰かがルームを作り、他のプレイヤーがコードで参加
+                <strong>
+                  ルーム
+                  <ruby>
+                    作成<rt>さくせい</rt>
+                  </ruby>
+                  ・
+                  <ruby>
+                    参加<rt>さんか</rt>
+                  </ruby>
+                  ：
+                </strong>
+                <ruby>
+                  誰<rt>だれ</rt>
+                </ruby>
+                かがルームを
+                <ruby>
+                  作<rt>つく</rt>
+                </ruby>
+                り、
+                <ruby>
+                  他<rt>ほか</rt>
+                </ruby>
+                のプレイヤーがコードで
+                <ruby>
+                  参加<rt>さんか</rt>
+                </ruby>
               </li>
               <li>
-                <strong>お題画像決定：</strong>
-                ランダムに選ばれたお題の画像が表示されます
+                <strong>
+                  <ruby>
+                    お題<rt>だい</rt>
+                  </ruby>
+                  <ruby>
+                    画像<rt>がぞう</rt>
+                  </ruby>
+                  <ruby>
+                    決定<rt>けってい</rt>
+                  </ruby>
+                  ：
+                </strong>
+                ランダムに
+                <ruby>
+                  選<rt>えら</rt>
+                </ruby>
+                ばれた
+                <ruby>
+                  お題<rt>だい</rt>
+                </ruby>
+                の
+                <ruby>
+                  画像<rt>がぞう</rt>
+                </ruby>
+                が
+                <ruby>
+                  表示<rt>ひょうじ</rt>
+                </ruby>
+                されます
               </li>
               <li>
-                <strong>プロンプト入力：</strong>
-                表示された画像を見て、その内容を説明するプロンプトを入力
+                <strong>
+                  プロンプト
+                  <ruby>
+                    入力<rt>にゅうりょく</rt>
+                  </ruby>
+                  ：
+                </strong>
+                <ruby>
+                  表示<rt>ひょうじ</rt>
+                </ruby>
+                された
+                <ruby>
+                  画像<rt>がぞう</rt>
+                </ruby>
+                を
+                <ruby>
+                  見<rt>み</rt>
+                </ruby>
+                て、その
+                <ruby>
+                  内容<rt>ないよう</rt>
+                </ruby>
+                を
+                <ruby>
+                  説明<rt>せつめい</rt>
+                </ruby>
+                するプロンプトを
+                <ruby>
+                  入力<rt>にゅうりょく</rt>
+                </ruby>
               </li>
               <li>
-                <strong>画像生成：</strong>
-                各プレイヤーのプロンプトからAIが画像を生成
+                <strong>
+                  <ruby>
+                    画像<rt>がぞう</rt>
+                  </ruby>
+                  <ruby>
+                    生成<rt>せいせい</rt>
+                  </ruby>
+                  ：
+                </strong>
+                <ruby>
+                  各<rt>かく</rt>
+                </ruby>
+                プレイヤーのプロンプトからAIが
+                <ruby>
+                  画像<rt>がぞう</rt>
+                </ruby>
+                を
+                <ruby>
+                  生成<rt>せいせい</rt>
+                </ruby>
               </li>
               <li>
-                <strong>投票：</strong>
-                生成された画像の中から、最も元の画像に近いと思うものに投票
+                <strong>
+                  <ruby>
+                    投票<rt>とうひょう</rt>
+                  </ruby>
+                  ：
+                </strong>
+                <ruby>
+                  生成<rt>せいせい</rt>
+                </ruby>
+                された
+                <ruby>
+                  画像<rt>がぞう</rt>
+                </ruby>
+                の
+                <ruby>
+                  中<rt>なか</rt>
+                </ruby>
+                から、
+                <ruby>
+                  最<rt>もっと</rt>
+                </ruby>
+                も
+                <ruby>
+                  元<rt>もと</rt>
+                </ruby>
+                の
+                <ruby>
+                  画像<rt>がぞう</rt>
+                </ruby>
+                に
+                <ruby>
+                  近<rt>ちか</rt>
+                </ruby>
+                いと
+                <ruby>
+                  思<rt>おも</rt>
+                </ruby>
+                うものに
+                <ruby>
+                  投票<rt>とうひょう</rt>
+                </ruby>
               </li>
               <li>
-                <strong>結果発表：</strong>投票結果と正解を発表！
+                <strong>
+                  <ruby>
+                    結果<rt>けっか</rt>
+                  </ruby>
+                  <ruby>
+                    発表<rt>はっぴょう</rt>
+                  </ruby>
+                  ：
+                </strong>
+                <ruby>
+                  投票<rt>とうひょう</rt>
+                </ruby>
+                <ruby>
+                  結果<rt>けっか</rt>
+                </ruby>
+                と
+                <ruby>
+                  正解<rt>せいかい</rt>
+                </ruby>
+                を
+                <ruby>
+                  発表<rt>はっぴょう</rt>
+                </ruby>
+                ！
               </li>
             </ol>
           </div>
@@ -67,26 +294,155 @@ export default function HowToPlay() {
             </h2>
             <ul className="list-disc list-inside space-y-1 text-sm sm:text-base">
               <li>
-                画像の<strong>具体的な内容</strong>を詳しく説明しよう
+                <ruby>
+                  画像<rt>がぞう</rt>
+                </ruby>
+                の
+                <strong>
+                  <ruby>
+                    具体<rt>ぐたい</rt>
+                  </ruby>
+                  <ruby>
+                    的<rt>てき</rt>
+                  </ruby>
+                  な
+                  <ruby>
+                    内容<rt>ないよう</rt>
+                  </ruby>
+                </strong>
+                を
+                <ruby>
+                  詳<rt>くわ</rt>
+                </ruby>
+                しく
+                <ruby>
+                  説明<rt>せつめい</rt>
+                </ruby>
+                しよう
               </li>
               <li>
-                <strong>色や形、位置関係</strong>も重要なポイント
+                <strong>
+                  <ruby>
+                    色<rt>いろ</rt>
+                  </ruby>
+                  や
+                  <ruby>
+                    形<rt>かたち</rt>
+                  </ruby>
+                  、
+                  <ruby>
+                    位置<rt>いち</rt>
+                  </ruby>
+                  <ruby>
+                    関係<rt>かんけい</rt>
+                  </ruby>
+                </strong>
+                も
+                <ruby>
+                  重要<rt>じゅうよう</rt>
+                </ruby>
+                なポイント
               </li>
               <li>
-                <strong>画風やスタイル</strong>も指定すると効果的
+                <strong>
+                  <ruby>
+                    画風<rt>がふう</rt>
+                  </ruby>
+                  やスタイル
+                </strong>
+                も
+                <ruby>
+                  指定<rt>してい</rt>
+                </ruby>
+                すると
+                <ruby>
+                  効果<rt>こうか</rt>
+                </ruby>
+                <ruby>
+                  的<rt>てき</rt>
+                </ruby>
               </li>
-              <li>短すぎず、長すぎない適度な長さで</li>
+              <li>
+                <ruby>
+                  短<rt>みじか</rt>
+                </ruby>
+                すぎず、
+                <ruby>
+                  長<rt>なが</rt>
+                </ruby>
+                すぎない
+                <ruby>
+                  適度<rt>てきど</rt>
+                </ruby>
+                な
+                <ruby>
+                  長<rt>なが</rt>
+                </ruby>
+                さで
+              </li>
             </ul>
           </div>
 
           <div className="bg-pink-100 p-4 rounded-xl border-l-4 border-pink-500">
             <h2 className="text-xl font-bold mb-2 text-pink-700">
-              🏆 勝利条件
+              🏆{" "}
+              <ruby>
+                勝利<rt>しょうり</rt>
+              </ruby>
+              <ruby>
+                条件<rt>じょうけん</rt>
+              </ruby>
             </h2>
             <p className="text-sm sm:text-base">
-              最も多くの票を集めた画像を生成したプレイヤーが勝利！
+              <ruby>
+                最<rt>もっと</rt>
+              </ruby>
+              も
+              <ruby>
+                多<rt>おお</rt>
+              </ruby>
+              くの
+              <ruby>
+                票<rt>ひょう</rt>
+              </ruby>
+              を
+              <ruby>
+                集<rt>あつ</rt>
+              </ruby>
+              めた
+              <ruby>
+                画像<rt>がぞう</rt>
+              </ruby>
+              を
+              <ruby>
+                生成<rt>せいせい</rt>
+              </ruby>
+              したプレイヤーが
+              <ruby>
+                勝利<rt>しょうり</rt>
+              </ruby>
+              ！
               <br />
-              みんなで楽しく創造力を競い合いましょう。
+              みんなで
+              <ruby>
+                楽<rt>たの</rt>
+              </ruby>
+              しく
+              <ruby>
+                創造<rt>そうぞう</rt>
+              </ruby>
+              <ruby>
+                力<rt>りょく</rt>
+              </ruby>
+              を
+              <ruby>
+                競<rt>きそ</rt>
+              </ruby>
+              い
+              <ruby>
+                合<rt>あ</rt>
+              </ruby>
+              いましょう。
             </p>
           </div>
         </div>
@@ -94,7 +450,11 @@ export default function HowToPlay() {
         <div className="text-center mt-8">
           <Link href="/">
             <button className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-xl text-base transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300">
-              トップページにもどる
+              トップページに
+              <ruby>
+                戻<rt>もど</rt>
+              </ruby>
+              る
             </button>
           </Link>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/src/components/LoadingSpinner";
 import { db } from "@/src/lib/firebase/client";
 import { Room } from "@/src/types/room";
 import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
@@ -109,7 +110,7 @@ export default function ResultPage() {
   };
 
   if (!room || results.length === 0) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   const isFinalRound =
@@ -122,7 +123,13 @@ export default function ResultPage() {
           className="text-3xl md:text-4xl font-bold text-white text-center mb-4"
           style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
         >
-          けっか発表！
+          <ruby>
+            結果<rt>けっか</rt>
+          </ruby>
+          <ruby>
+            発表<rt>はっぴょう</rt>
+          </ruby>
+          ！
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -140,7 +147,10 @@ export default function ResultPage() {
                 {result.authorName}
               </p>
               <p className="text-pink-500 font-bold text-xl">
-                {result.votes.length}票
+                {result.votes.length}
+                <ruby>
+                  票<rt>ひょう</rt>
+                </ruby>
               </p>
               <p className="text-sm text-gray-600 mt-2 bg-gray-100 p-2 rounded-lg">
                 {result.prompt}
@@ -155,11 +165,31 @@ export default function ResultPage() {
             disabled={isStarting}
             className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 disabled:bg-gray-400"
           >
-            {isStarting
-              ? "次のラウンドをはじめています..."
-              : isFinalRound
-              ? "最終結果へ"
-              : "次のラウンドへ"}
+            {isStarting ? (
+              <span>
+                <ruby>
+                  次<rt>つぎ</rt>
+                </ruby>
+                のラウンドをはじめています...
+              </span>
+            ) : isFinalRound ? (
+              <span>
+                <ruby>
+                  最終<rt>さいしゅう</rt>
+                </ruby>
+                <ruby>
+                  結果<rt>けっか</rt>
+                </ruby>
+                へ
+              </span>
+            ) : (
+              <span>
+                <ruby>
+                  次<rt>つぎ</rt>
+                </ruby>
+                のラウンドへ
+              </span>
+            )}
           </button>
         </div>
       </div>

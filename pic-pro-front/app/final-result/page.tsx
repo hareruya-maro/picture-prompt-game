@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/src/components/LoadingSpinner";
 import { db } from "@/src/lib/firebase/client";
 import { Player, Room } from "@/src/types/room";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -39,7 +40,7 @@ export default function FinalResult() {
   }, [roomId, router]);
 
   if (!room || ranking.length === 0) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   const winner = ranking[0];
@@ -48,7 +49,15 @@ export default function FinalResult() {
     if (index === 0) return "🥇";
     if (index === 1) return "🥈";
     if (index === 2) return "🥉";
-    return `${index + 1}位:`;
+    return (
+      <>
+        {index + 1}
+        <ruby>
+          位<rt>い</rt>
+        </ruby>
+        :
+      </>
+    );
   };
 
   return (
@@ -59,7 +68,10 @@ export default function FinalResult() {
             className="reveal-up-animation text-4xl md:text-5xl font-bold text-white"
             style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
           >
-            ゆうしょうは…
+            <ruby>
+              優勝<rt>ゆうしょう</rt>
+            </ruby>
+            は…
           </h1>
 
           <div
@@ -81,7 +93,12 @@ export default function FinalResult() {
             <p className="text-4xl md:text-5xl font-bold text-pink-500">
               {winner.name}さん！
             </p>
-            <p className="text-2xl text-gray-700 mt-2">{winner.score}点</p>
+            <p className="text-2xl text-gray-700 mt-2">
+              {winner.score}
+              <ruby>
+                点<rt>てん</rt>
+              </ruby>
+            </p>
           </div>
         </div>
 
@@ -90,7 +107,10 @@ export default function FinalResult() {
           style={{ animationDelay: "1s" }}
         >
           <h2 className="text-2xl font-bold text-slate-800 mb-4 drop-shadow-lg">
-            さいしゅうランキング
+            <ruby>
+              最終<rt>さいしゅう</rt>
+            </ruby>
+            ランキング
           </h2>
           <div className="space-y-2 text-lg text-left">
             {ranking.map((player, index) => (
@@ -102,7 +122,11 @@ export default function FinalResult() {
                     : "bg-gray-100 text-gray-900"
                 }`}
               >
-                {getRankEmoji(index)} {player.name} ({player.score}点)
+                {getRankEmoji(index)} {player.name} ({player.score}
+                <ruby>
+                  点<rt>てん</rt>
+                </ruby>
+                )
               </p>
             ))}
           </div>
@@ -114,7 +138,14 @@ export default function FinalResult() {
         >
           <Link href="/">
             <button className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105">
-              もういちどあそぶ！
+              もう
+              <ruby>
+                一度<rt>いちど</rt>
+              </ruby>
+              <ruby>
+                遊<rt>あそ</rt>
+              </ruby>
+              ぶ！
             </button>
           </Link>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/src/components/LoadingSpinner";
 import { useAuth } from "@/src/hooks/useAuth";
 import { db } from "@/src/lib/firebase/client";
 import { Room } from "@/src/types/room";
@@ -129,14 +130,7 @@ export default function InputPrompt() {
   };
 
   if (!room) {
-    return (
-      <main className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white mx-auto"></div>
-          <p className="text-white text-xl mt-4">読み込み中...</p>
-        </div>
-      </main>
-    );
+    return <LoadingSpinner />;
   }
 
   // お絵かきタイム（drawing状態）の表示
@@ -147,19 +141,52 @@ export default function InputPrompt() {
           <div className="mb-6">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-pink-500 border-t-transparent mx-auto mb-4"></div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              🎨 みんなの絵をかいてるよ...！
+              🎨 みんなの
+              <ruby>
+                絵<rt>え</rt>
+              </ruby>
+              を
+              <ruby>
+                描<rt>か</rt>
+              </ruby>
+              いてるよ...！
             </h1>
             <p className="text-lg text-gray-600 mb-6">
-              AIがそれぞれのプロンプトから素敵な絵を生成しています。
+              AIがそれぞれのプロンプトから
+              <ruby>
+                素敵<rt>すてき</rt>
+              </ruby>
+              な
+              <ruby>
+                絵<rt>え</rt>
+              </ruby>
+              を
+              <ruby>
+                生成<rt>せいせい</rt>
+              </ruby>
+              しています。
               <br />
-              少しだけお待ちください...
+              <ruby>
+                少<rt>すこ</rt>
+              </ruby>
+              しだけお
+              <ruby>
+                待<rt>ま</rt>
+              </ruby>
+              ちください...
             </p>
           </div>
 
           {/* 提出状況の表示 */}
           <div className="bg-gray-50 rounded-xl p-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-3">
-              プロンプト提出状況
+              プロンプト
+              <ruby>
+                提出<rt>ていしゅつ</rt>
+              </ruby>
+              <ruby>
+                状況<rt>じょうきょう</rt>
+              </ruby>
             </h3>
             <div className="space-y-2">
               {Object.entries(room.players).map(([playerId, player]) => (
@@ -175,7 +202,28 @@ export default function InputPrompt() {
                         : "bg-gray-200 text-gray-600"
                     }`}
                   >
-                    {submissionStatus[playerId] ? "✓ 提出済み" : "待機中..."}
+                    {submissionStatus[playerId] ? (
+                      <>
+                        ✓{" "}
+                        <ruby>
+                          提出<rt>ていしゅつ</rt>
+                        </ruby>
+                        <ruby>
+                          済<rt>ず</rt>
+                        </ruby>
+                        み
+                      </>
+                    ) : (
+                      <>
+                        <ruby>
+                          待機<rt>たいき</rt>
+                        </ruby>
+                        <ruby>
+                          中<rt>ちゅう</rt>
+                        </ruby>
+                        ...
+                      </>
+                    )}
                   </span>
                 </div>
               ))}
@@ -198,14 +246,28 @@ export default function InputPrompt() {
             className="text-3xl md:text-4xl font-bold text-white mb-4"
             style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
           >
-            🎯 今回のお題
+            🎯{" "}
+            <ruby>
+              今回<rt>こんかい</rt>
+            </ruby>
+            のお
+            <ruby>
+              題<rt>だい</rt>
+            </ruby>
           </h1>
 
           {/* お手本の絵の表示 */}
           {room.sampleImageUrl && (
             <div className="bg-white/90 backdrop-blur-sm p-6 rounded-3xl shadow-2xl border-2 border-white mb-6 mx-auto max-w-2xl">
               <h2 className="text-xl font-bold text-gray-800 mb-4">
-                お手本の絵
+                お
+                <ruby>
+                  手本<rt>てほん</rt>
+                </ruby>
+                の
+                <ruby>
+                  絵<rt>え</rt>
+                </ruby>
               </h2>
               <div className="relative">
                 <img
@@ -222,13 +284,48 @@ export default function InputPrompt() {
         {/* プロンプト入力エリア */}
         <div className="bg-white/90 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-2xl border-2 border-white max-w-2xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">
-            ✏️ あなたのプロンプトを入力してね！
+            ✏️ あなたのプロンプトを
+            <ruby>
+              入力<rt>にゅうりょく</rt>
+            </ruby>
+            してね！
           </h2>
 
           <p className="text-gray-600 mb-6 text-center">
-            上のお手本の絵と同じような絵を描いてもらうために、
+            <ruby>
+              上<rt>うえ</rt>
+            </ruby>
+            のお
+            <ruby>
+              手本<rt>てほん</rt>
+            </ruby>
+            の
+            <ruby>
+              絵<rt>え</rt>
+            </ruby>
+            と
+            <ruby>
+              同<rt>おな</rt>
+            </ruby>
+            じような
+            <ruby>
+              絵<rt>え</rt>
+            </ruby>
+            を
+            <ruby>
+              描<rt>か</rt>
+            </ruby>
+            いてもらうために、
             <br />
-            AIにどんな指示を出しますか？
+            AIにどんな
+            <ruby>
+              指示<rt>しじ</rt>
+            </ruby>
+            を
+            <ruby>
+              出<rt>だ</rt>
+            </ruby>
+            しますか？
           </p>
 
           {!isSubmitted ? (
@@ -242,7 +339,12 @@ export default function InputPrompt() {
               />
 
               <div className="flex justify-between items-center text-sm text-gray-500">
-                <span>{prompt.length}/500文字</span>
+                <span>
+                  {prompt.length}/500
+                  <ruby>
+                    文字<rt>もじ</rt>
+                  </ruby>
+                </span>
               </div>
 
               <button
@@ -254,17 +356,36 @@ export default function InputPrompt() {
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                プロンプトを送信！
+                プロンプトを
+                <ruby>
+                  送信<rt>そうしん</rt>
+                </ruby>
+                ！
               </button>
             </div>
           ) : (
             <div className="text-center">
               <div className="bg-green-100 border-2 border-green-500 rounded-xl p-6">
                 <h3 className="text-xl font-bold text-green-800 mb-2">
-                  ✅ プロンプトを送信しました！
+                  ✅ プロンプトを
+                  <ruby>
+                    送信<rt>そうしん</rt>
+                  </ruby>
+                  しました！
                 </h3>
                 <p className="text-green-700">
-                  他のプレイヤーの入力を待っています...
+                  <ruby>
+                    他<rt>ほか</rt>
+                  </ruby>
+                  のプレイヤーの
+                  <ruby>
+                    入力<rt>にゅうりょく</rt>
+                  </ruby>
+                  を
+                  <ruby>
+                    待<rt>ま</rt>
+                  </ruby>
+                  っています...
                 </p>
               </div>
             </div>
@@ -273,7 +394,13 @@ export default function InputPrompt() {
           {/* 提出状況 */}
           <div className="mt-6 p-4 bg-gray-50 rounded-xl">
             <h3 className="text-lg font-semibold text-gray-700 mb-3 text-center">
-              提出状況 ({submittedCount}/{totalPlayers})
+              <ruby>
+                提出<rt>ていしゅつ</rt>
+              </ruby>
+              <ruby>
+                状況<rt>じょうきょう</rt>
+              </ruby>{" "}
+              ({submittedCount}/{totalPlayers})
             </h3>
             <div className="space-y-2">
               {Object.entries(room.players).map(([playerId, player]) => (
@@ -289,7 +416,24 @@ export default function InputPrompt() {
                         : "bg-yellow-200 text-yellow-800"
                     }`}
                   >
-                    {submissionStatus[playerId] ? "✓ 完了" : "⏳ 入力中"}
+                    {submissionStatus[playerId] ? (
+                      <>
+                        ✓{" "}
+                        <ruby>
+                          完了<rt>かんりょう</rt>
+                        </ruby>
+                      </>
+                    ) : (
+                      <>
+                        ⏳{" "}
+                        <ruby>
+                          入力<rt>にゅうりょく</rt>
+                        </ruby>
+                        <ruby>
+                          中<rt>ちゅう</rt>
+                        </ruby>
+                      </>
+                    )}
                   </span>
                 </div>
               ))}

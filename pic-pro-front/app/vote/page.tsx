@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/src/components/LoadingSpinner";
 import { useAuth } from "@/src/hooks/useAuth";
 import { db } from "@/src/lib/firebase/client";
 import { Room } from "@/src/types/room";
@@ -131,24 +132,11 @@ export default function Vote() {
   };
 
   if (!room) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (results.length === 0) {
-    return (
-      <main className="min-h-screen p-4">
-        <div className="container mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
-            結果を読み込み中...
-          </h1>
-          <div className="text-center text-white">
-            <p>現在のラウンド: {room.currentRound || 1}</p>
-            <p>結果の数: {results.length}</p>
-            <p>ゲームステータス: {room.status}</p>
-          </div>
-        </div>
-      </main>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
@@ -158,15 +146,42 @@ export default function Vote() {
           className="text-3xl md:text-4xl font-bold text-white text-center mb-4"
           style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
         >
-          {voted
-            ? "みんなのとうひょうをまってるよ！"
-            : "いちばんにてるのはどれ？"}
+          {voted ? (
+            <>
+              みんなの
+              <ruby>
+                投票<rt>とうひょう</rt>
+              </ruby>
+              を
+              <ruby>
+                待<rt>ま</rt>
+              </ruby>
+              ってるよ！
+            </>
+          ) : (
+            <>
+              <ruby>
+                一番<rt>いちばん</rt>
+              </ruby>
+              <ruby>
+                似<rt>に</rt>
+              </ruby>
+              てるのはどれ？
+            </>
+          )}
         </h1>
 
         <div className="mb-6 sticky top-4 z-10">
           <div className="max-w-xs mx-auto bg-white/80 backdrop-blur-sm p-2 rounded-2xl shadow-lg border-2 border-white">
             <p className="text-center text-sm text-gray-600 mb-1">
-              おてほんの絵
+              お
+              <ruby>
+                手本<rt>てほん</rt>
+              </ruby>
+              の
+              <ruby>
+                絵<rt>え</rt>
+              </ruby>
             </p>
             <img
               src={room.sampleImageUrl}
@@ -195,7 +210,16 @@ export default function Vote() {
                 disabled={voted}
                 className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg text-lg shadow-md transition disabled:bg-gray-400"
               >
-                {voted ? `(${result.votes.length})` : "とうひょう！"}
+                {voted ? (
+                  `(${result.votes.length})`
+                ) : (
+                  <>
+                    <ruby>
+                      投票<rt>とうひょう</rt>
+                    </ruby>
+                    ！
+                  </>
+                )}
               </button>
             </div>
           ))}

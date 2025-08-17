@@ -7,7 +7,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>; // Or a proper loading spinner
+    return (
+      <div>
+        <ruby>
+          読込中<rt>よみこみちゅう</rt>
+        </ruby>
+        ...
+      </div>
+    ); // Or a proper loading spinner
   }
 
   return <>{children}</>;

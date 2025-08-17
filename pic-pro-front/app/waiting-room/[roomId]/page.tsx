@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/src/components/LoadingSpinner";
 import QRCodeDisplay from "@/src/components/QRCodeDisplay";
 import { useAuth } from "@/src/hooks/useAuth";
 import { db } from "@/src/lib/firebase/client";
@@ -96,7 +97,7 @@ export default function WaitingRoom() {
   };
 
   if (!room) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   // 参加用URLを生成（ルームIDをクエリパラメータとして追加）
@@ -106,7 +107,15 @@ export default function WaitingRoom() {
     <main className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md mx-auto bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-2xl border-2 border-white">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">
-          みんながそろうまでまってね
+          みんなが
+          <ruby>
+            揃<rt>そろ</rt>
+          </ruby>
+          うまで
+          <ruby>
+            待<rt>ま</rt>
+          </ruby>
+          ってね
         </h1>
 
         <QRCodeDisplay url={joinUrl} roomId={roomId} />
@@ -141,7 +150,14 @@ export default function WaitingRoom() {
 
         <div className="mb-6">
           <h2 className="text-lg font-bold text-gray-700 mb-2 text-center">
-            いまいるメンバー ({Object.keys(room.players).length}人)
+            <ruby>
+              今<rt>いま</rt>
+            </ruby>
+            いるメンバー ({Object.keys(room.players).length}
+            <ruby>
+              人<rt>にん</rt>
+            </ruby>
+            )
           </h2>
           <div className="bg-white/50 rounded-lg p-4 h-40 overflow-y-auto border-2 border-white">
             {Object.entries(room.players).map(([uid, player]) => (
@@ -157,14 +173,45 @@ export default function WaitingRoom() {
 
         <div className="text-sm text-gray-600 space-y-1 mb-6 text-center">
           <p>
-            とうひょうモード:{" "}
+            <ruby>
+              投票<rt>とうひょう</rt>
+            </ruby>
+            モード:{" "}
             <span className="font-bold text-pink-500">
-              {room.voteMode === "anonymous" ? "だれのかな？" : "みんなの絵"}
+              {room.voteMode === "anonymous" ? (
+                <>
+                  <ruby>
+                    誰<rt>だれ</rt>
+                  </ruby>
+                  のかな？
+                </>
+              ) : (
+                <>
+                  みんなの
+                  <ruby>
+                    絵<rt>え</rt>
+                  </ruby>
+                </>
+              )}
             </span>
           </p>
           <p>
-            なんかい勝負？:{" "}
-            <span className="font-bold text-pink-500">{room.rounds}回</span>
+            <ruby>
+              何<rt>なん</rt>
+            </ruby>
+            <ruby>
+              回<rt>かい</rt>
+            </ruby>
+            <ruby>
+              勝負<rt>しょうぶ</rt>
+            </ruby>
+            ？:{" "}
+            <span className="font-bold text-pink-500">
+              {room.rounds}
+              <ruby>
+                回<rt>かい</rt>
+              </ruby>
+            </span>
           </p>
         </div>
 
@@ -175,14 +222,34 @@ export default function WaitingRoom() {
               disabled={isStarting}
               className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 disabled:bg-gray-400"
             >
-              {isStarting ? "ゲームをはじめています..." : "ゲームをはじめる！"}
+              {isStarting ? (
+                <span>
+                  ゲームを
+                  <ruby>
+                    始<rt>はじ</rt>
+                  </ruby>
+                  めています...
+                </span>
+              ) : (
+                <span>
+                  ゲームを
+                  <ruby>
+                    始<rt>はじ</rt>
+                  </ruby>
+                  める！
+                </span>
+              )}
             </button>
           )}
           <button
             onClick={handleLeaveRoom}
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-xl text-sm mt-2 transition-transform transform hover:scale-105"
           >
-            ルームからでる
+            ルームから
+            <ruby>
+              出<rt>で</rt>
+            </ruby>
+            る
           </button>
         </div>
       </div>
