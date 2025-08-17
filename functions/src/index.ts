@@ -213,6 +213,7 @@ export const onPromptSubmitted = onDocumentCreated(
 export const onGameStart = onDocumentUpdated(
   "rooms/{roomId}",
   async (event) => {
+    console.log("[onGameStart] Triggered on room update");
     const before = event.data?.before.data();
     const after = event.data?.after.data();
 
@@ -231,15 +232,23 @@ export const onGameStart = onDocumentUpdated(
 );
 
 export const onStartDrawing = onDocumentUpdated(
-  "rooms/{roomId}",
+  {
+    document: "rooms/{roomId}",
+    secrets: [googleAIapiKey],
+  },
   async (event) => {
+    console.log("[onStartDrawing] Triggered on room update");
     const before = event.data?.before.data();
     const after = event.data?.after.data();
 
-    if (!before || !after) return;
+    if (!before || !after) {
+      console.log("No before or after data found, skipping onStartDrawing.");
+      return;
+    }
 
     // Trigger only when status changes to 'drawing'
     if (before.status === "drawing" || after.status !== "drawing") {
+      console.log("Status change to 'drawing' detected.");
       return;
     }
 
