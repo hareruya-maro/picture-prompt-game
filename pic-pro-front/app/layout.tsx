@@ -25,10 +25,10 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    title: "コピっと！~ピクプロ！~",
+    title: "ピクプロ！",
     description:
       "ピクプロは、ひらめきでお題の絵を完全再現するゲームです。友達と一緒に楽しもう！",
-    site: "https://www.copitto.com/",
+    site: "https://pic-pro-front--picture-prompt-game.asia-east1.hosted.app/",
     images: {
       url: "https://pic-pro-front--picture-prompt-game.asia-east1.hosted.app/ogp/thumbnail.png",
       type: "image/png",
